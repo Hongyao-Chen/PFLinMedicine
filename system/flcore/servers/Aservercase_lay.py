@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from matplotlib import pyplot as plt
 
-from system.flcore.clients.Aclientours import clientOurs
+from system.flcore.clients.Aclientcase import clientOurs
 from system.flcore.servers.serverbase import Server
 
 pd.set_option('display.max_rows', None)
@@ -17,7 +17,7 @@ pd.set_option('display.width', None)
 from torch.autograd import Function
 
 
-class OursFL(Server):
+class Lay_FedCASE(Server):
     def __init__(self, args, times):
         super().__init__(args, times)
 

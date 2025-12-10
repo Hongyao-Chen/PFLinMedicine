@@ -15,11 +15,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import matplotlib.pyplot as plt
 import time
 from system.flcore.clients.clientavg import clientAVG
 from system.flcore.servers.serverbase import Server
 from threading import Thread
-
+import numpy as np
 
 class FedAvg(Server):
     def __init__(self, args, times):
@@ -36,6 +37,32 @@ class FedAvg(Server):
         self.Budget = []
 
     def train(self):
+        for c in self.clients:
+            print(len(c.trainloader))
+            batch = next(iter(c.trainloader))  # 取出第一个 batch
+            imgs, lbls = batch  # (tensor, tensor)
+            imgs = imgs[:10]  # 保险只取 10 张
+            lbls = lbls[:10]
+
+            # 把 Tensor 转成 numpy 并反归一化到 0-1（根据你数据集的 mean/std 调）
+            imgs = imgs.cpu().numpy()
+            if imgs.shape[1] == 3:  # RGB
+                imgs = np.transpose(imgs, (0, 2, 3, 1))  # NCHW -> NHWC
+                imgs = np.clip((imgs * 0.25 + 0.5), 0, 1)
+            else:  # 灰度
+                imgs = np.squeeze(imgs, axis=1)
+
+            # 画 2×5 网格
+            fig, axs = plt.subplots(2, 5, figsize=(10, 4))
+            axs = axs.flatten()
+            for i in range(10):
+                axs[i].imshow(imgs[i], cmap='gray' if imgs.ndim == 3 else None)
+                axs[i].set_title(f'lbl:{lbls[i].item()}')
+                axs[i].axis('off')
+            # fig.suptitle(f'Client {client_id}')
+            plt.tight_layout()
+            plt.show()
+        exit(0)
         for i in range(self.global_rounds + 1):
             s_t = time.time()
             self.selected_clients = self.select_clients()

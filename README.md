@@ -1,24 +1,4 @@
-# PFLlib: Personalized Federated Learning Library
-
-👏 **We will change the license to Apache-2.0 in the next release.**
-
-[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) [![arXiv](https://img.shields.io/badge/arXiv-2312.04992-b31b1b.svg)](https://arxiv.org/abs/2312.04992)
-
-![](./structure.png)
-Figure 1: An Example for FedAvg. You can create a scenario using `generate_DATA.py` and run an algorithm using `main.py`, `clientNAME.py`, and `serverNAME.py`. For a new algorithm, you only need to add new features in `clientNAME.py` and `serverNAME.py`.
-
-🎯***We create a user-friendly algorithm library and evaluation platform for those new to federated learning. Join us in expanding the FL community by contributing your algorithms, datasets, and metrics to this project.***
-
-🎯**If you find our repository useful, please cite the following paper:**
-
-```
-@article{zhang2023pfllib,
-  title={PFLlib: Personalized Federated Learning Algorithm Library},
-  author={Zhang, Jianqing and Liu, Yang and Hua, Yang and Wang, Hao and Song, Tao and Xue, Zhengui and Ma, Ruhui and Cao, Jian},
-  journal={arXiv preprint arXiv:2312.04992},
-  year={2023}
-}
-```
+# PFL
 
 - ***37 traditional FL ([tFL](#traditional-fl-tfl)) and personalized FL ([pFL](#personalized-fl-pfl)) algorithms, 3 scenarios, and 20 datasets.***
 
@@ -270,62 +250,13 @@ conda env create -f env_cuda_latest.yaml # You may need to downgrade the torch u
 
 **Note**: It is preferable to tune algorithm-specific hyper-parameters before using any algorithm on a new machine. 
 
-## Practical situations
-If you need to simulate FL under practical situations, which includes **client dropout**, **slow trainers**, **slow senders**, and **network TTL**, you can set the following parameters to realize it.
-
-- `-cdr`: The dropout rate for total clients. The selected clients will randomly drop at each training round.
-- `-tsr` and `-ssr`: The rates for slow trainers and slow senders among all clients. Once a client is selected as a "slow trainer"/"slow sender", for example, it will always train/send slower than the original one. 
-- `-tth`: The threshold for network TTL (ms). 
-
-## Easy to extend
-It is easy to add new algorithms and datasets to this library. 
-
-- To add a **new dataset** into this library, all you need to do is write the download code and use the utils which is similar to `./dataset/generate_MNIST.py` (you can also consider it as the template). 
-
-- To add a **new algorithm**, you can utilize the class **Server** and class **Client**, which are wrote in `./system/flcore/servers/serverbase.py` and `./system/flcore/clients/clientbase.py`, respectively. 
-
-- To add a **new model**, just add it into `./system/flcore/trainmodel/models.py`.
-
-- If you have a **new optimizer** while training, please add it into `./system/flcore/optimizers/fedoptimizer.py`
-
-- The evaluation platform is also convenient for users to build a new platform for specific applications, such as our [FL-IoT](https://github.com/TsingZ0/FL-IoT) and [HtFLlib](https://github.com/TsingZ0/HtFLlib). 
-
-
-## Experimental results
-
-If you are interested in **the experimental results (e.g., the accuracy) of the above algorithms**, you can find some results in our accepted FL papers (i.e., [FedALA](https://github.com/TsingZ0/FedALA), [FedCP](https://github.com/TsingZ0/FedCP), [GPFL](https://github.com/TsingZ0/GPFL), and [DBE](https://github.com/TsingZ0/DBE)) listed as follows that also use this library. *Please note that this developing project may not be able to reproduce the results on these papers, since some basic settings may change due to the requests of the community. For example, we previously set `shuffle=False` in clientbase.py* 
+🎯**This repository is an extension of the following paper：**
 
 ```
-@inproceedings{zhang2023fedala,
-  title={Fedala: Adaptive local aggregation for personalized federated learning},
-  author={Zhang, Jianqing and Hua, Yang and Wang, Hao and Song, Tao and Xue, Zhengui and Ma, Ruhui and Guan, Haibing},
-  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
-  volume={37},
-  number={9},
-  pages={11237--11244},
+@article{zhang2023pfllib,
+  title={PFLlib: Personalized Federated Learning Algorithm Library},
+  author={Zhang, Jianqing and Liu, Yang and Hua, Yang and Wang, Hao and Song, Tao and Xue, Zhengui and Ma, Ruhui and Cao, Jian},
+  journal={arXiv preprint arXiv:2312.04992},
   year={2023}
-}
-
-@inproceedings{Zhang2023fedcp,
-  author = {Zhang, Jianqing and Hua, Yang and Wang, Hao and Song, Tao and Xue, Zhengui and Ma, Ruhui and Guan, Haibing},
-  title = {FedCP: Separating Feature Information for Personalized Federated Learning via Conditional Policy},
-  year = {2023},
-  booktitle = {Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining}
-}
-
-@inproceedings{zhang2023gpfl,
-  title={GPFL: Simultaneously Learning Global and Personalized Feature Information for Personalized Federated Learning},
-  author={Zhang, Jianqing and Hua, Yang and Wang, Hao and Song, Tao and Xue, Zhengui and Ma, Ruhui and Cao, Jian and Guan, Haibing},
-  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
-  pages={5041--5051},
-  year={2023}
-}
-
-@inproceedings{zhang2023eliminating,
-  title={Eliminating Domain Bias for Federated Learning in Representation Space},
-  author={Jianqing Zhang and Yang Hua and Jian Cao and Hao Wang and Tao Song and Zhengui XUE and Ruhui Ma and Haibing Guan},
-  booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
-  year={2023},
-  url={https://openreview.net/forum?id=nO5i1XdUS0}
 }
 ```

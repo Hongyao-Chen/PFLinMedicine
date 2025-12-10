@@ -74,86 +74,11 @@ from flcore.trainmodel.resnet import *
 from flcore.trainmodel.alexnet import *
 from flcore.trainmodel.mobilenet_v2 import *
 from flcore.trainmodel.transformer import *
-from system.flcore.servers.Aserverours import OursFL as OursFL
-from system.flcore.servers.Aserverours_ import OursFL as OursFL_
+from system.flcore.servers.Aservercase import FedCASE
+from system.flcore.servers.Aservercase_lay import Lay_FedCASE
 from utils.result_utils import average_data
 from utils.mem_utils import MemReporter
-def replace_conv_with_wsconv(model):
-    for name, module in model.named_children():
-        if isinstance(module, nn.Conv2d):
-            in_channels = module.in_channels
-            out_channels = module.out_channels
-            kernel_size = module.kernel_size
-            stride = module.stride
-            padding = module.padding
-            wsconv = WSConv(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride,
-                            padding=padding)
-            setattr(model, name, wsconv)
-        else:
-            # Recursively replace in child modules
-            replace_conv_with_wsconv(module)
-class WSConv(nn.Conv2d):
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1,
-                 padding=0, dilation=1, groups=1, bias=False, padding_mode='zeros'):
-        super(WSConv, self).__init__(in_channels, out_channels, kernel_size,
-                                     stride, padding, dilation, groups, bias, padding_mode)
-        nn.init.xavier_normal_(self.weight)
-        self.gain = nn.Parameter(torch.ones(self.out_channels, 1, 1, 1))
-        _eps = torch.tensor(1e-4, requires_grad=False)
-        _fan_in = torch.tensor(self.weight.shape[1:].numel(), requires_grad=False).type_as(self.weight)
-        self.register_buffer('eps', _eps, persistent=False)
-        self.register_buffer('fan_in', _fan_in, persistent=False)
 
-    def standardized_weights(self):
-        mean = torch.mean(self.weight, axis=[1, 2, 3], keepdims=True)
-        var = torch.var(self.weight, axis=[1, 2, 3], keepdims=True)
-        scale = torch.rsqrt(torch.maximum(var * self.fan_in, self.eps))
-        return (self.weight - mean) * scale * self.gain
-
-    def forward(self, x):
-        return F.conv2d(
-            input=x,
-            weight=self.standardized_weights(),
-            bias=self.bias,
-            stride=self.stride,
-            padding=self.padding,
-            dilation=self.dilation,
-            groups=self.groups
-        )
-
-class WSLinear(nn.Linear):
-    def __init__(self, in_features, out_features, bias=True):
-        super(WSLinear, self).__init__(in_features, out_features, bias)
-
-        # Xavier初始化权重
-        nn.init.xavier_normal_(self.weight)
-
-        # 可学习的缩放因子 (每个输出特征一个缩放值)
-        self.gain = nn.Parameter(torch.ones(out_features, 1))
-
-        # 注册缓冲区
-        _eps = torch.tensor(1e-4, requires_grad=False)
-        _fan_in = torch.tensor(in_features, requires_grad=False).type_as(self.weight)
-        self.register_buffer('eps', _eps, persistent=False)
-        self.register_buffer('fan_in', _fan_in, persistent=False)
-
-    def standardized_weights(self):
-        # 计算均值和方差 (沿输入维度)
-        mean = torch.mean(self.weight, dim=1, keepdim=True)  # [out_features, 1]
-        var = torch.var(self.weight, dim=1, keepdim=True)  # [out_features, 1]
-
-        # 计算标准化比例因子
-        scale = torch.rsqrt(torch.maximum(var * self.fan_in, self.eps))
-
-        # 返回标准化后的权重
-        return (self.weight - mean) * scale * self.gain
-
-    def forward(self, x):
-        return F.linear(
-            input=x,
-            weight=self.standardized_weights(),
-            bias=self.bias
-        )
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
 
@@ -183,26 +108,26 @@ def run(args):
         elif model_str == "CNN":  # non-convex
             if "MNIST" in args.dataset:
                 args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
-            elif "Cifar10" in args.dataset or "Digit5" in args.dataset or "MIDOGpp" in args.dataset:
+            elif "Cifar10" in args.dataset or "Digit5" == args.dataset or "MIDOGpp" == args.dataset:
                 args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
-            elif "PACS" in args.dataset:
+            elif args.dataset == "PACS":
                 args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
                 args.model.conv2.add_module("adaptive_avg_pool", nn.AdaptiveAvgPool2d((5, 5)))
-            elif "Omniglot" in args.dataset:
+            elif args.dataset == "Omniglot":
                 args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=33856).to(args.device)
+            elif args.dataset == "PathMNIST":
+                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1024).to(args.device)
+            elif args.dataset == "OrganSMNIST" or args.dataset == "OCTMNIST":
+                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
+            elif args.dataset == "OrganCMNIST224" or args.dataset == "PneumoniaMNIST224":
+                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1600).to(args.device)
+                args.model.conv2.add_module("adaptive_avg_pool", nn.AdaptiveAvgPool2d((5, 5)))
+            elif args.dataset == "RetinaMNIST224":
+                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
+                args.model.conv2.add_module("adaptive_avg_pool", nn.AdaptiveAvgPool2d((5, 5)))
             else:
                 args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
 
-            if args.dataset == "PathMNIST":
-                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1024).to(args.device)
-            if args.dataset == "OrganSMNIST" or args.dataset == "OCTMNIST":
-                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
-            if args.dataset == "OrganCMNIST224" or args.dataset == "PneumoniaMNIST224":
-                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1600).to(args.device)
-                args.model.conv2.add_module("adaptive_avg_pool", nn.AdaptiveAvgPool2d((5, 5)))
-            if args.dataset == "RetinaMNIST224":
-                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
-                args.model.conv2.add_module("adaptive_avg_pool", nn.AdaptiveAvgPool2d((5, 5)))
             # replace_conv_with_wsconv(args.model)
             # args.model = args.model.cuda()
 
@@ -306,12 +231,12 @@ def run(args):
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedAvg(args, i)
 
-        elif args.algorithm == "OursFL":
-            server = OursFL(args, i)
+        elif args.algorithm == "FedCASE":
+            server = FedCASE(args, i)
             setattr(args.model, 'new_function', types.MethodType(server.list_load_to_params, args.model))
 
-        elif args.algorithm == "OursFL_":
-            server = OursFL_(args, i)
+        elif args.algorithm == "Lay-FedCASE":
+            server = Lay_FedCASE(args, i)
             setattr(args.model, 'new_function', types.MethodType(server.list_load_to_params, args.model))
 
         elif args.algorithm == "Local":
@@ -516,7 +441,7 @@ if __name__ == "__main__":
     parser.add_argument('-did', "--device_id", type=str, default="0")
     parser.add_argument('-data', "--dataset", type=str, default="MIDOGpp")
     # PathMNIST 9 / OrganSMNIST 11 / OCTMNIST 4 / OrganCMNIST224 11 / # PneumoniaMNIST224 2 /$ RetinaMNIST224 5 /MIDOGpp 2
-    parser.add_argument('-ncl', "--num_classes", type=int, default=2)
+    parser.add_argument('-ncl', "--num_classes", type=int, default=7)
     parser.add_argument('-m', "--model", type=str, default='CNN')
     parser.add_argument('-lbs', "--batch_size", type=int, default=10)
     parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.005,
@@ -528,7 +453,7 @@ if __name__ == "__main__":
                         help="For auto_break")
     parser.add_argument('-ls', "--local_epochs", type=int, default=1,
                         help="Multiple update steps in one local epoch.")
-    parser.add_argument('-algo', "--algorithm", type=str, default="OursFL_")
+    parser.add_argument('-algo', "--algorithm", type=str, default="FedAvg")
     parser.add_argument('-jr', "--join_ratio", type=float, default=1,
                         help="Ratio of clients per round")
     parser.add_argument('-rjr', "--random_join_ratio", type=bool, default=False,

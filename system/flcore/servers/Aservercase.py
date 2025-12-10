@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 from matplotlib import pyplot as plt
 
-from system.flcore.clients.Aclientours import clientOurs
+from system.flcore.clients.Aclientcase import clientOurs
 from system.flcore.servers.serverbase import Server
 
 pd.set_option('display.max_rows', None)  # 显示所有行
@@ -16,7 +16,7 @@ pd.set_option('display.width', None)  # 设置显示宽度，None表示不限制
 from torch.autograd import Function
 
 
-class OursFL(Server):
+class FedCASE(Server):
     def __init__(self, args, times):
         super().__init__(args, times)
 
@@ -49,10 +49,12 @@ class OursFL(Server):
             c_t = time.time()
             for client in self.selected_clients:
                 client.train()
+                # print(len(client.train_samples))
                 self.gradients[client.id] = client.collect_gradients(self.personalized_models[client.id])
                 # print(self.gradients[client.id])
                 self.gradients[client.id].clamp_(min=-5.0, max=5.0)
             c_t = time.time() - c_t
+            # exit(0)
             print('-' * 25, 'client time', '-' * 25, c_t)
             #############
             self.receive_models()

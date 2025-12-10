@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator, FormatStrFormatter
-
+# from pyarrow.types import null
+from sympy import true
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 # 设置全局字体为 Arial
 # 设置全局字体为Arial
 plt.rcParams['font.family'] = 'Arial'
@@ -89,8 +91,8 @@ plt.rcParams['font.size'] = 18
 # # 显示图形
 # plt.show()
 # ###############################################################
-#
-# # 数据
+
+# 数据
 # count = {
 #     'H1 \n (human breast cancer) ': {'1': 2327, '2': 1366},
 #     'H2 \n (canine lung cancer)': {'1': 855, '2': 951},
@@ -99,6 +101,15 @@ plt.rcParams['font.size'] = 18
 #     'H5 \n (human neuroendocrine tumor)': {'1': 1721, '2': 2714},
 #     'H6 \n (canine soft tissue sarcoma)': {'1': 1150, '2': 925},
 #     'H7 \n (human melanoma)': {'1': 639, '2': 1761},
+# # }
+# count = {
+#     'H1': {'1': 2327, '2': 1366},
+#     'H2': {'1': 855, '2': 951},
+#     'H3': {'1': 3959, '2': 4257},
+#     'H4': {'1': 1283, '2': 2375},
+#     'H5': {'1': 1721, '2': 2714},
+#     'H6': {'1': 1150, '2': 925},
+#     'H7': {'1': 639, '2': 1761},
 # }
 #
 #
@@ -107,7 +118,7 @@ plt.rcParams['font.size'] = 18
 # non_mitotic = [count[tt]['2'] for tt in labels]
 #
 #
-# plt.figure(figsize=(10, 6))
+# plt.figure(figsize=(8, 6))
 #
 #
 # plt.barh(
@@ -134,11 +145,11 @@ plt.rcParams['font.size'] = 18
 # plt.legend()
 # plt.tight_layout()
 # plt.show()
-#
-# # plt.title('Image Count for MIDOG++', fontsize=18)
-# # plt.xlabel('Image Count', fontsize=18)
-# # plt.ylabel('Tumor Type', fontsize=18)
-#
+
+# plt.title('Image Count for MIDOG++', fontsize=18)
+# plt.xlabel('Image Count', fontsize=18)
+# plt.ylabel('Tumor Type', fontsize=18)
+
 #
 # plt.yticks(fontsize=18)
 #
@@ -154,7 +165,7 @@ plt.rcParams['font.size'] = 18
 # plt.tight_layout()
 # plt.savefig('2.png', dpi=300)
 # plt.show()
-# ##################################################################################
+##################################################################################
 # import matplotlib.pyplot as plt
 # import numpy as np
 #
@@ -384,233 +395,233 @@ plt.rcParams['font.size'] = 18
 # except Exception as e:
 #     print(f"加载图像时发生错误: {str(e)}")
 ###############################################################
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-
-# --------------------------
-# 16组数据准备（示例，需替换为你的实际数据）
-# 每组数据格式：{'Algorithm': [...], 'Performance': [...], 'Std': [...]}
-# --------------------------
-all_data = [
-    # 第1组数据（示例）
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([93.24, 96.11, 96.32, 96.18, 94.76, 95.25, 95.89, 96.40, 96.09, 96.36]),
-        'Std': np.array([0.35, 0.03, 0.02, 0.16, 0.07, 0.07, 0.31, 0.05, 0.13, 0.09])
-    },
-    # 第2组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([92.87, 95.13, 95.63, 95.68, 92.82, 93.54, 95.12, 95.66, 96.15, 96.64]),
-        'Std': np.array([0.10, 0.05, 0.14, 0.05, 0.07, 0.06, 0.05, 0.04, 0.11, 0.04])
-    },
-    # 第3组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([96.01, 97.87, 97.76, 97.90, 97.36, 97.56, 97.60, 97.70, 97.86, 98.05]),
-        'Std': np.array([0.27, 0.07, 0.01, 0.04, 0.13, 0.11, 0.08, 0.08, 0.02, 0.07])
-    },
-    # 第4组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([95.44, 96.19, 96.64, 96.56, 96.04, 95.59, 96.79, 97.01, 97.53, 97.38]),
-        'Std': np.array([0.19, 0.05, 0.21, 0.04, 0.07, 0.30, 0.09, 0.04, 0.04, 0.06])
-    },
-    # 第1组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([95.05, 97.41, 97.68, 97.78, 97.11, 97.34, 97.76, 97.63, 97.92, 97.99]),
-        'Std': np.array([0.03, 0.02, 0.02, 0.02, 0.02, 0.03, 0.01, 0.09, 0.01, 0.02])
-    },
-    # 第2组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([88.29, 90.52, 90.63, 92.00, 88.30, 89.31, 90.82, 91.18, 91.67, 92.21]),
-        'Std': np.array([0.13, 0.00, 0.07, 0.11, 0.13, 0.17, 0.20, 0.02, 0.13, 0.05])
-    },
-    # 第3组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([41.75, 51.43, 59.62, 54.65, 45.19, 47.58, 55.79, 56.71, 60.31, 61.17]),
-        'Std': np.array([0.12, 0.03, 0.21, 0.16, 0.13, 0.42, 0.08, 0.08, 0.04, 0.02])
-    },
-    # 第4组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([27.37, 42.36, 43.51, 44.35, 31.64, 33.89, 42.09, 44.83, 45.68, 48.06]),
-        'Std': np.array([0.16, 0.01, 0.11, 0.07, 0.29, 0.14, 0.09, 0.09, 0.11, 0.13])
-    },
-    # 第5组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([93.94, 95.35, 93.07, 95.57, 94.47, 94.70, 95.44, 95.40, 95.78, 95.86]),
-        'Std': np.array([0.08, 0.03, 0.16, 0.19, 0.10, 0.13, 0.07, 0.12, 0.05, 0.03])
-    },
-    # 第6组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([97.68, 93.92, 95.20, 97.80, 95.62, 90.24, 97.38, 97.64, 98.52, 98.66]),
-        'Std': np.array([0.12, 0.09, 0.01, 0.12, 0.03, 0.04, 0.13, 0.21, 0.04, 0.02])
-    },
-    # 第7组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([69.99, 61.33, 62.77, 61.17, 63.37, 55.95, 67.19, 67.95, 71.86, 72.89]),
-        'Std': np.array([0.16, 0.15, 0.22, 0.18, 0.47, 0.19, 0.31, 0.06, 0.08, 0.12])
-    },
-    # 第8组数据
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
-                      'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
-        'Performance': np.array([91.88, 95.79, 94.02, 93.53, 92.55, 95.42, 94.50, 91.09, 97.25, 98.07]),
-        'Std': np.array([0.51, 0.39, 0.41, 0.42, 0.33, 0.17, 0.64, 0.20, 0.43, 0.09])
-    },
-    # 第2组数据 (K=50)
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
-                      'Ours+'],
-        'Performance': np.array([43.55, 48.07, 54.99, 40.06, 42.45, 44.71, 57.27, 59.31, 61.66, 62.72]),
-        'Std': np.array([0.61, 0.32, 0.12, 0.21, 0.28, 0.08, 0.43, 0.11, 0.26, 0.07])
-    },
-    # 第3组数据 (K=100)
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
-                      'Ours+'],
-        'Performance': np.array([39.86, 43.83, 49.49, 35.76, 38.69, 41.51, 51.39, 54.43, 60.34, 61.65]),
-        'Std': np.array([0.43, 0.09, 0.17, 0.21, 0.29, 0.10, 0.65, 0.06, 0.19, 0.13])
-    },
-    # 第5组数据 (K=50|100)
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP' ,'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
-                      'Ours+'],
-        'Performance': np.array([39.72, 43.09, 48.57, 35.13, 38.38, 41.43, 38.34, 54.42, 59.76, 60.08]),
-        'Std': np.array([0.31, 0.17, 0.05, 0.35, 0.42, 0.09, 0.32, 0.11, 0.26, 0.08])
-    },
-    # 第6组数据 (K=25|100)
-    {
-        'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
-                      'Ours+'],
-        'Performance': np.array([39.41, 42.23, 46.38, 33.15, 38.42, 40.88, 31.49, 53.18, 53.54, 54.80]),
-        'Std': np.array([0.54, 0.33, 0.23, 0.61, 0.09, 0.02, 0.23, 0.12, 0.09, 0.21])
-    }
-]
-
-# --------------------------
-# 创建4×4画布
-# --------------------------
-fig, axes = plt.subplots(4, 4, figsize=(40, 32))  # 4×4子图，总尺寸放大以保证清晰度
-axes = axes.flatten()  # 将2D数组转为1D，方便循环
-
-# --------------------------
-# 为每个子图绘图
-# --------------------------
-for idx, data in enumerate(all_data[:16]):  # 确保只取前16组数据
-    ax = axes[idx]
-    df = pd.DataFrame(data)
-
-    # 生成算法专属颜色
-    num_algorithms = len(df['Algorithm'])
-    colors = plt.cm.tab10(np.linspace(0, 1, num_algorithms))
-
-    # 绘制散点图和误差线（Performance和Std已转为数组，直接使用）
-    for i, (algo, perf, std, color) in enumerate(zip(
-            df['Algorithm'],
-            0.01 * df['Performance'],  # 归一化到0-1范围
-            0.01 * df['Std'],  # 误差线同步归一化
-            colors
-    )):
-        # 散点图
-        ax.scatter(
-            i, perf,
-            s=300,  # 子图中适当减小点大小
-            color=color,
-            edgecolors='black',
-            linewidth=3,
-            zorder=3,
-        )
-        # 误差线（与散点同色）
-        ax.errorbar(
-            i, perf,
-            yerr=std,
-            fmt='',
-            color=color,
-            capsize=3,
-            capthick=1.5,
-            elinewidth=3,
-            alpha=0.8
-        )
-
-    # 子图设置
-    ax.tick_params(axis='x', which='both', length=0)  # 去掉x轴刻度线
-    ax.set_xticks([])  # 去掉x轴标签
-    ax.grid(True, alpha=0.6, axis='y')
-
-    # # 可选：为子图添加标题（如数据组别）
-    ax.yaxis.set_major_locator(
-        MaxNLocator(
-            nbins=8,        # 严格显示5个刻度
-            integer=False,  # 允许非整数
-            symmetric=False, # 不强制对称分布
-        )
-    )
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))  # 保留2位小数
-    ax.tick_params(
-        axis='y',  # 只针对y轴
-        labelsize=24,  # 字体大小（可调整）
-    )
-    for spine in ax.spines.values():  # 获取子图的四个边框（上、下、左、右）
-        spine.set_linewidth(2.5)      # 边框粗细（默认约1，2.5较明显）
-# --------------------------
-# 调整布局：预留顶部图例空间+上下子图间距
-# --------------------------
-# 生成图例元素（每个算法对应一个散点标记）
-algorithms = all_data[0]['Algorithm']
-num_algorithms = len(algorithms)
-colors = plt.cm.tab10(np.linspace(0, 1, num_algorithms))
-legend_elements = [
-    Line2D(
-        [0], [0], marker='o', color='w',  # 线隐藏，仅显示标记
-        markerfacecolor=colors[i], markeredgecolor='black',
-        markersize=24, markeredgewidth =3,  # 匹配散点大小
-        label=algorithms[i]
-    ) for i in range(num_algorithms)
-]
-
-# 添加全局图例
-fig.legend(
-    handles=legend_elements,  # 使用手动创建的元素
-    fontsize=32,
-    ncol=10,
-    bbox_to_anchor=(0.5, 0.99),
-    loc='center',
-    frameon=False,
-)
-
-# --------------------------
-# 核心：强制设置上下子图间距
-# --------------------------
-plt.subplots_adjust(
-    top=0.95,  # 顶部留白（为图例）
-    bottom=0.02,  # 底部留白
-    left=0.05,
-    right=0.95,
-    hspace=0.15,  # 上下子图间距（关键参数，0.4足够明显，可增大至0.5）
-    wspace=0.2  # 左右子图间距（辅助调整）
-)
-plt.savefig('Result2.png', dpi=300)
-plt.show()
+# import pandas as pd
+# import matplotlib.pyplot as plt
+# import numpy as np
+#
+# # --------------------------
+# # 16组数据准备（示例，需替换为你的实际数据）
+# # 每组数据格式：{'Algorithm': [...], 'Performance': [...], 'Std': [...]}
+# # --------------------------
+# all_data = [
+#     # 第1组数据（示例）
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([93.24, 96.11, 96.32, 96.18, 94.76, 95.25, 95.89, 96.40, 96.09, 96.36]),
+#         'Std': np.array([0.35, 0.03, 0.02, 0.16, 0.07, 0.07, 0.31, 0.05, 0.13, 0.09])
+#     },
+#     # 第2组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([92.87, 95.13, 95.63, 95.68, 92.82, 93.54, 95.12, 95.66, 96.15, 96.64]),
+#         'Std': np.array([0.10, 0.05, 0.14, 0.05, 0.07, 0.06, 0.05, 0.04, 0.11, 0.04])
+#     },
+#     # 第3组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([96.01, 97.87, 97.76, 97.90, 97.36, 97.56, 97.60, 97.70, 97.86, 98.05]),
+#         'Std': np.array([0.27, 0.07, 0.01, 0.04, 0.13, 0.11, 0.08, 0.08, 0.02, 0.07])
+#     },
+#     # 第4组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([95.44, 96.19, 96.64, 96.56, 96.04, 95.59, 96.79, 97.01, 97.53, 97.38]),
+#         'Std': np.array([0.19, 0.05, 0.21, 0.04, 0.07, 0.30, 0.09, 0.04, 0.04, 0.06])
+#     },
+#     # 第1组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([95.05, 97.41, 97.68, 97.78, 97.11, 97.34, 97.76, 97.63, 97.92, 97.99]),
+#         'Std': np.array([0.03, 0.02, 0.02, 0.02, 0.02, 0.03, 0.01, 0.09, 0.01, 0.02])
+#     },
+#     # 第2组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([88.29, 90.52, 90.63, 92.00, 88.30, 89.31, 90.82, 91.18, 91.67, 92.21]),
+#         'Std': np.array([0.13, 0.00, 0.07, 0.11, 0.13, 0.17, 0.20, 0.02, 0.13, 0.05])
+#     },
+#     # 第3组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([41.75, 51.43, 59.62, 54.65, 45.19, 47.58, 55.79, 56.71, 60.31, 61.17]),
+#         'Std': np.array([0.12, 0.03, 0.21, 0.16, 0.13, 0.42, 0.08, 0.08, 0.04, 0.02])
+#     },
+#     # 第4组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([27.37, 42.36, 43.51, 44.35, 31.64, 33.89, 42.09, 44.83, 45.68, 48.06]),
+#         'Std': np.array([0.16, 0.01, 0.11, 0.07, 0.29, 0.14, 0.09, 0.09, 0.11, 0.13])
+#     },
+#     # 第5组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([93.94, 95.35, 93.07, 95.57, 94.47, 94.70, 95.44, 95.40, 95.78, 95.86]),
+#         'Std': np.array([0.08, 0.03, 0.16, 0.19, 0.10, 0.13, 0.07, 0.12, 0.05, 0.03])
+#     },
+#     # 第6组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([97.68, 93.92, 95.20, 97.80, 95.62, 90.24, 97.38, 97.64, 98.52, 98.66]),
+#         'Std': np.array([0.12, 0.09, 0.01, 0.12, 0.03, 0.04, 0.13, 0.21, 0.04, 0.02])
+#     },
+#     # 第7组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([69.99, 61.33, 62.77, 61.17, 63.37, 55.95, 67.19, 67.95, 71.86, 72.89]),
+#         'Std': np.array([0.16, 0.15, 0.22, 0.18, 0.47, 0.19, 0.31, 0.06, 0.08, 0.12])
+#     },
+#     # 第8组数据
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo',
+#                       'FedAMP', 'FedPHP', 'FedALA', 'FedCASE', 'Lay-FedCASE'],
+#         'Performance': np.array([91.88, 95.79, 94.02, 93.53, 92.55, 95.42, 94.50, 91.09, 97.25, 98.07]),
+#         'Std': np.array([0.51, 0.39, 0.41, 0.42, 0.33, 0.17, 0.64, 0.20, 0.43, 0.09])
+#     },
+#     # 第2组数据 (K=50)
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
+#                       'Ours+'],
+#         'Performance': np.array([43.55, 48.07, 54.99, 40.06, 42.45, 44.71, 57.27, 59.31, 61.66, 62.72]),
+#         'Std': np.array([0.61, 0.32, 0.12, 0.21, 0.28, 0.08, 0.43, 0.11, 0.26, 0.07])
+#     },
+#     # 第3组数据 (K=100)
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
+#                       'Ours+'],
+#         'Performance': np.array([39.86, 43.83, 49.49, 35.76, 38.69, 41.51, 51.39, 54.43, 60.34, 61.65]),
+#         'Std': np.array([0.43, 0.09, 0.17, 0.21, 0.29, 0.10, 0.65, 0.06, 0.19, 0.13])
+#     },
+#     # 第5组数据 (K=50|100)
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP' ,'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
+#                       'Ours+'],
+#         'Performance': np.array([39.72, 43.09, 48.57, 35.13, 38.38, 41.43, 38.34, 54.42, 59.76, 60.08]),
+#         'Std': np.array([0.31, 0.17, 0.05, 0.35, 0.42, 0.09, 0.32, 0.11, 0.26, 0.08])
+#     },
+#     # 第6组数据 (K=25|100)
+#     {
+#         'Algorithm': ['Per-FedAvg', 'FedRep', 'FedCP', 'FedAS', 'FedFomo', 'FedAMP', 'FedPHP', 'FedALA', 'Ours',
+#                       'Ours+'],
+#         'Performance': np.array([39.41, 42.23, 46.38, 33.15, 38.42, 40.88, 31.49, 53.18, 53.54, 54.80]),
+#         'Std': np.array([0.54, 0.33, 0.23, 0.61, 0.09, 0.02, 0.23, 0.12, 0.09, 0.21])
+#     }
+# ]
+#
+# # --------------------------
+# # 创建4×4画布
+# # --------------------------
+# fig, axes = plt.subplots(4, 4, figsize=(40, 32))  # 4×4子图，总尺寸放大以保证清晰度
+# axes = axes.flatten()  # 将2D数组转为1D，方便循环
+#
+# # --------------------------
+# # 为每个子图绘图
+# # --------------------------
+# for idx, data in enumerate(all_data[:16]):  # 确保只取前16组数据
+#     ax = axes[idx]
+#     df = pd.DataFrame(data)
+#
+#     # 生成算法专属颜色
+#     num_algorithms = len(df['Algorithm'])
+#     colors = plt.cm.tab10(np.linspace(0, 1, num_algorithms))
+#
+#     # 绘制散点图和误差线（Performance和Std已转为数组，直接使用）
+#     for i, (algo, perf, std, color) in enumerate(zip(
+#             df['Algorithm'],
+#             0.01 * df['Performance'],  # 归一化到0-1范围
+#             0.01 * df['Std'],  # 误差线同步归一化
+#             colors
+#     )):
+#         # 散点图
+#         ax.scatter(
+#             i, perf,
+#             s=300,  # 子图中适当减小点大小
+#             color=color,
+#             edgecolors='black',
+#             linewidth=3,
+#             zorder=3,
+#         )
+#         # 误差线（与散点同色）
+#         ax.errorbar(
+#             i, perf,
+#             yerr=std,
+#             fmt='',
+#             color=color,
+#             capsize=3,
+#             capthick=1.5,
+#             elinewidth=3,
+#             alpha=0.8
+#         )
+#
+#     # 子图设置
+#     ax.tick_params(axis='x', which='both', length=0)  # 去掉x轴刻度线
+#     ax.set_xticks([])  # 去掉x轴标签
+#     ax.grid(True, alpha=0.6, axis='y')
+#
+#     # # 可选：为子图添加标题（如数据组别）
+#     ax.yaxis.set_major_locator(
+#         MaxNLocator(
+#             nbins=8,        # 严格显示5个刻度
+#             integer=False,  # 允许非整数
+#             symmetric=False, # 不强制对称分布
+#         )
+#     )
+#     ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))  # 保留2位小数
+#     ax.tick_params(
+#         axis='y',  # 只针对y轴
+#         labelsize=24,  # 字体大小（可调整）
+#     )
+#     for spine in ax.spines.values():  # 获取子图的四个边框（上、下、左、右）
+#         spine.set_linewidth(2.5)      # 边框粗细（默认约1，2.5较明显）
+# # --------------------------
+# # 调整布局：预留顶部图例空间+上下子图间距
+# # --------------------------
+# # 生成图例元素（每个算法对应一个散点标记）
+# algorithms = all_data[0]['Algorithm']
+# num_algorithms = len(algorithms)
+# colors = plt.cm.tab10(np.linspace(0, 1, num_algorithms))
+# legend_elements = [
+#     Line2D(
+#         [0], [0], marker='o', color='w',  # 线隐藏，仅显示标记
+#         markerfacecolor=colors[i], markeredgecolor='black',
+#         markersize=24, markeredgewidth =3,  # 匹配散点大小
+#         label=algorithms[i]
+#     ) for i in range(num_algorithms)
+# ]
+#
+# # 添加全局图例
+# fig.legend(
+#     handles=legend_elements,  # 使用手动创建的元素
+#     fontsize=32,
+#     ncol=10,
+#     bbox_to_anchor=(0.5, 0.99),
+#     loc='center',
+#     frameon=False,
+# )
+#
+# # --------------------------
+# # 核心：强制设置上下子图间距
+# # --------------------------
+# plt.subplots_adjust(
+#     top=0.95,  # 顶部留白（为图例）
+#     bottom=0.02,  # 底部留白
+#     left=0.05,
+#     right=0.95,
+#     hspace=0.15,  # 上下子图间距（关键参数，0.4足够明显，可增大至0.5）
+#     wspace=0.2  # 左右子图间距（辅助调整）
+# )
+# plt.savefig('Result2.png', dpi=300)
+# plt.show()
 
 #######################################################################
 # import os
@@ -868,3 +879,49 @@ plt.show()
 #
 # if __name__ == "__main__":
 #     lda_14_categories_visualization()
+#########################################################
+
+# conf ={"num_clients":30,"num_classes":6,"Size of samples for labels in clients":[[[0,95],[1,53],[2,49],[3,47],[4,53],[5,50]],[[0,59],[1,48],[2,47],[3,46],[4,54],[5,48]],[[0,58],[1,59],[2,49],[3,52],[4,61],[5,62]],[[0,60],[1,52],[2,45],[3,50],[4,56],[5,54]],[[0,56],[1,47],[2,47],[3,44],[4,56],[5,52]],[[0,57],[1,51],[2,48],[3,55],[4,57],[5,57]],[[0,57],[1,51],[2,47],[3,48],[4,53],[5,52]],[[0,48],[1,41],[2,38],[3,46],[4,54],[5,54]],[[0,52],[1,49],[2,42],[3,50],[4,45],[5,50]],[[0,53],[1,47],[2,38],[3,54],[4,44],[5,58]],[[0,59],[1,54],[2,46],[3,53],[4,47],[5,57]],[[0,50],[1,52],[2,46],[3,51],[4,61],[5,60]],[[0,57],[1,55],[2,47],[3,49],[4,57],[5,62]],[[0,59],[1,54],[2,45],[3,54],[4,60],[5,51]],[[0,54],[1,48],[2,42],[3,59],[4,53],[5,72]],[[0,51],[1,51],[2,47],[3,69],[4,78],[5,70]],[[0,61],[1,48],[2,46],[3,64],[4,78],[5,71]],[[0,56],[1,58],[2,55],[3,57],[4,73],[5,65]],[[0,52],[1,40],[2,39],[3,73],[4,73],[5,83]],[[0,51],[1,51],[2,45],[3,66],[4,73],[5,68]],[[0,52],[1,47],[2,45],[3,85],[4,89],[5,90]],[[0,46],[1,42],[2,36],[3,62],[4,63],[5,72]],[[0,59],[1,51],[2,54],[3,68],[4,68],[5,72]],[[0,58],[1,59],[2,55],[3,68],[4,69],[5,72]],[[0,74],[1,65],[2,58],[3,65],[4,74],[5,73]],[[0,59],[1,55],[2,50],[3,78],[4,74],[5,76]],[[0,57],[1,51],[2,44],[3,70],[4,80],[5,74]],[[0,54],[1,51],[2,46],[3,72],[4,79],[5,80]],[[0,53],[1,49],[2,48],[3,60],[4,65],[5,69]],[[0,65],[1,65],[2,62],[3,62],[4,59],[5,70]]]}
+# data = conf["Size of samples for labels in clients"]
+# clients = conf["num_clients"]
+# categories = sorted({c for cli in data for c, _ in cli})
+# cv = {c: i for i, c in enumerate(categories)}
+# matrix = np.zeros((len(categories), clients))
+#
+# for cli_idx, cli in enumerate(data[:clients]):
+#     for c, v in cli:
+#         matrix[cv[c], cli_idx] = v
+#
+# # 绘制热力图
+# plt.figure(figsize=(10, 8))
+# # base = plt.cm.YlGnBu(np.linspace(0.1, 0.75, 255))   # 变浅
+# # # 把 0 对应位置替换成原色图最浅颜色
+# # origin_light = plt.cm.YlGnBu(0.0)                  # 原最浅颜色
+# # colors = np.vstack([origin_light, base])           # 0 索引放原浅色
+# # light_cmap = LinearSegmentedColormap.from_list('light_YlGnBu', colors, N=256)
+#
+# # 变浅
+# plt.imshow(matrix, aspect='auto',cmap='YlGnBu', interpolation='nearest')
+# sparse_xticks = range(1, clients+1, 2)
+# plt.xticks([x-1 for x in sparse_xticks], sparse_xticks)
+# plt.colorbar()
+# ax = plt.gca()
+# ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+# plt.tight_layout()
+# plt.show()
+
+#############################################
+import matplotlib.pyplot as plt
+import numpy as np
+
+n = 20
+values = np.full(n, 1000)
+# 4 种颜色，每 4 根柱子一组，正好 5 组
+colors = np.repeat(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'], 4)
+plt.figure(figsize=(10, 8))
+plt.bar(range(1, n+1), values, color=colors, width=0.7)
+
+plt.xticks(range(1, n+1))
+plt.ylim(0, 1100)
+plt.tight_layout()
+plt.show()
