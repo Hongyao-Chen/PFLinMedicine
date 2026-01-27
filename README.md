@@ -1,4 +1,6 @@
-# PFL
+# PFLinMedicine
+
+This is the official implementation of **"FedCASE: Quantifying Asymmetric Collaboration for Personalized Federated Learning"**.
 
 - ***37 traditional FL ([tFL](#traditional-fl-tfl)) and personalized FL ([pFL](#personalized-fl-pfl)) algorithms, 3 scenarios, and 20 datasets.***
 
