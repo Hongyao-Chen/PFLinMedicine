@@ -2,25 +2,14 @@
 
 This is the official implementation of **"FedCASE: Quantifying Asymmetric Collaboration for Personalized Federated Learning"**.
 
-- ***37 traditional FL ([tFL](#traditional-fl-tfl)) and personalized FL ([pFL](#personalized-fl-pfl)) algorithms, 3 scenarios, and 20 datasets.***
+## Datasets and scenarios (updating)
+For the ***class imbalance*** scenario, we introduce **14** famous datasets: **MNIST**, **EMNIST**, **Fashion-MNIST**, **Cifar10**, **Cifar100**, **AG News**, **Sogou News**, **Tiny-ImageNet**, **Country211**, **Flowers102**, **GTSRB**, **Shakespeare**, and **Stanford Cars**, they can be easy split into **IID** and **non-IID** version. Since some codes for generating datasets such as splitting are the same for all datasets, we move these codes into `./dataset/utils/dataset_utils.py`. In the **non-IID** scenario, 2 situations exist. The first one is the **pathological non-IID** scenario, the second one is the **practical non-IID** scenario. In the **pathological non-IID** scenario, for example, the data on each client only contains the specific number of labels (maybe only 2 labels), though the data on all clients contains 10 labels such as the MNIST dataset. In the **practical non-IID** scenario, Dirichlet distribution is utilized (please refer to this [paper](https://proceedings.neurips.cc/paper/2020/hash/18df51b97ccd68128e994804f3eccc87-Abstract.html) for details). We can input `balance` for the iid scenario, where the data are uniformly distributed. 
 
-- Some **experimental results** are avalible in its [paper](https://arxiv.org/abs/2312.04992) and [here](#experimental-results). 
+For the ***domain shift*** scenario, we use **3** datasets that are widely used in Domain Adaptation: **Amazon Review** (fetch raw data from [this site](https://drive.google.com/file/d/1QbXFENNyqor1IlCpRRFtOluI2_hMEd1W/view?usp=sharing)), **Digit5** (fetch raw data from [this site](https://drive.google.com/file/d/1sO2PisChNPVT0CnOvIgGJkxdEosCwMUb/view)), and **DomainNet**.
 
-- Refer to [this guide](#how-to-start-simulating-examples-for-fedavg) to learn how to use it.
+For the ***real-world*** scenario, we also introduce **3** naturally separated datasets: **Omniglot** (20 clients, 50 labels), **HAR (Human Activity Recognition)** (30 clients, 6 labels), **PAMAP2** (9 clients, 12 labels). For the details of datasets and FL algorithms in **IoT**, please refer to [FL-IoT](https://github.com/TsingZ0/FL-IoT).
 
-- *This library can simulate scenarios using the 4-layer CNN on Cifar100 for **500 clients** on **one NVIDIA GeForce RTX 3090 GPU card** with only **5.08GB GPU memory** cost.*
-
-- PFLlib primarily focuses on data (statistical) heterogeneity. For algorithms and an evaluation platform that address **both data and model heterogeneity**, please refer to our extended project **[Heterogeneous Federated Learning (HtFLlib)](https://github.com/TsingZ0/HtFLlib)**.
-
-- As we strive to meet diverse user demands, frequent updates to the project may alter default settings and scenario creation codes, affecting experimental results.
-  
-- [Closed issues](https://github.com/TsingZ0/PFLlib/issues?q=is%3Aissue+is%3Aclosed) may help you a lot.
-
-- When submitting pull requests, please provide sufficient *instructions* and *examples* in the comment box. 
-
-The origin of the **data heterogeneity** phenomenon is the characteristics of users, who generate non-IID (not Independent and Identically Distributed) and unbalanced data. With data heterogeneity existing in the FL scenario, a myriad of approaches have been proposed to crack this hard nut. In contrast, the personalized FL (pFL) may take advantage of the statistically heterogeneous data to learn the personalized model for each user. 
-
-Thanks to [@Stonesjtu](https://github.com/Stonesjtu/pytorch_memlab/blob/d590c489236ee25d157ff60ecd18433e8f9acbe3/pytorch_memlab/mem_reporter.py#L185), this library can also record the **GPU memory usage** for the model. Following [FedCG](https://www.ijcai.org/proceedings/2022/0324.pdf), we also introduce the **[DLG (Deep Leakage from Gradients)](https://papers.nips.cc/paper_files/paper/2019/hash/60a6c4002cc7b29142def8871531281a-Abstract.html) attack** and **PSNR (Peak Signal-to-Noise Ratio) metric** to evaluate the privacy-preserving ability of tFL/pFL algorithms (please refer to `./system/flcore/servers/serveravg.py` for example). *Now we can train on some clients and evaluate performance on other new clients by setting `args.num_new_clients` in `./system/main.py`. Note that not all the tFL/pFL algorithms support this feature.*
+*If you need another data set, just write another code to download it and then use the utils.*
 
 
 ## Algorithms with code (updating)
@@ -95,14 +84,7 @@ Thanks to [@Stonesjtu](https://github.com/Stonesjtu/pytorch_memlab/blob/d590c489
 - **FedPCL (w/o pre-trained models)** — [Federated learning from pre-trained models: A contrastive learning approach](https://proceedings.neurips.cc/paper_files/paper/2022/file/7aa320d2b4b8f6400b18f6f77b6c1535-Paper-Conference.pdf) *NeurIPS 2022* 
 - **FedPAC** — [Personalized Federated Learning with Feature Alignment and Classifier Collaboration](https://openreview.net/pdf?id=SXZr8aDKia) *ICLR 2023*
 
-## Datasets and scenarios (updating)
-For the ***label skew*** scenario, we introduce **14** famous datasets: **MNIST**, **EMNIST**, **Fashion-MNIST**, **Cifar10**, **Cifar100**, **AG News**, **Sogou News**, **Tiny-ImageNet**, **Country211**, **Flowers102**, **GTSRB**, **Shakespeare**, and **Stanford Cars**, they can be easy split into **IID** and **non-IID** version. Since some codes for generating datasets such as splitting are the same for all datasets, we move these codes into `./dataset/utils/dataset_utils.py`. In the **non-IID** scenario, 2 situations exist. The first one is the **pathological non-IID** scenario, the second one is the **practical non-IID** scenario. In the **pathological non-IID** scenario, for example, the data on each client only contains the specific number of labels (maybe only 2 labels), though the data on all clients contains 10 labels such as the MNIST dataset. In the **practical non-IID** scenario, Dirichlet distribution is utilized (please refer to this [paper](https://proceedings.neurips.cc/paper/2020/hash/18df51b97ccd68128e994804f3eccc87-Abstract.html) for details). We can input `balance` for the iid scenario, where the data are uniformly distributed. 
 
-For the ***feature shift*** scenario, we use **3** datasets that are widely used in Domain Adaptation: **Amazon Review** (fetch raw data from [this site](https://drive.google.com/file/d/1QbXFENNyqor1IlCpRRFtOluI2_hMEd1W/view?usp=sharing)), **Digit5** (fetch raw data from [this site](https://drive.google.com/file/d/1sO2PisChNPVT0CnOvIgGJkxdEosCwMUb/view)), and **DomainNet**.
-
-For the ***real-world*** scenario, we also introduce **3** naturally separated datasets: **Omniglot** (20 clients, 50 labels), **HAR (Human Activity Recognition)** (30 clients, 6 labels), **PAMAP2** (9 clients, 12 labels). For the details of datasets and FL algorithms in **IoT**, please refer to [FL-IoT](https://github.com/TsingZ0/FL-IoT).
-
-*If you need another data set, just write another code to download it and then use the utils.*
 
 ### Examples for **MNIST**
 - MNIST
@@ -190,48 +172,6 @@ Client 2         Size of data: 1630      Labels:  [0 3 6 9]
 
     Finish generating dataset.
 </details>
-
-## Models
-- for MNIST and Fashion-MNIST
-
-    1. Mclr_Logistic(1\*28\*28)
-    2. LeNet()
-    3. DNN(1\*28\*28, 100) # non-convex
-
-- for Cifar10, Cifar100 and Tiny-ImageNet
-
-    1. Mclr_Logistic(3\*32\*32)
-    2. FedAvgCNN()
-    3. DNN(3\*32\*32, 100) # non-convex
-    4. ResNet18, AlexNet, MobileNet, GoogleNet, etc.
-
-- for AG_News and Sogou_News
-
-    1. LSTM()
-    2. fastText() in [Bag of Tricks for Efficient Text Classification](https://aclanthology.org/E17-2068/) 
-    3. TextCNN() in [Convolutional Neural Networks for Sentence Classification](https://aclanthology.org/D14-1181/)
-    4. TransformerModel() in [Attention is all you need](https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)
-
-- for AmazonReview
-
-    1. AmazonMLP() in [Curriculum manager for source selection in multi-source domain adaptation](https://link.springer.com/chapter/10.1007/978-3-030-58568-6_36)
-
-- for Omniglot
-
-    1. FedAvgCNN()
-
-- for HAR and PAMAP
-
-    1. HARCNN() in [Convolutional neural networks for human activity recognition using mobile sensors](https://eudl.eu/pdf/10.4108/icst.mobicase.2014.257786)
-
-## Environments
-Install [CUDA v11.6](https://developer.nvidia.com/cuda-11-6-0-download-archive). 
-
-Install [conda latest](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh) and activate conda. 
-
-```bash
-conda env create -f env_cuda_latest.yaml # You may need to downgrade the torch using pip to match the CUDA version
-```
 
 ## How to start simulating (examples for FedAvg)
 
