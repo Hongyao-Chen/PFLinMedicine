@@ -4,12 +4,12 @@ This is the official implementation of **"FedCASE: Quantifying Asymmetric Collab
 
 
 ## Quick Start
-- generate Cifar100 dataset 
+- generate Cifar100 dataset
     ```
     cd .\dataset\
     python generate_Cifar100.py noniid - dir  
     ```
--run FedCASE/Lay-FedCASE
+- run FedCASE/Lay-FedCASE
     ```
     cd .\system\
     python main.py --data Cifar100 --algo Lay-FedCASE --global_lr 0.05 --ar_lr 0.02
