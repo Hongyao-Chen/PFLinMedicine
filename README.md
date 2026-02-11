@@ -12,6 +12,7 @@ This is the official implementation of **"FedCASE: Quantifying Asymmetric Collab
 - run FedCASE/Lay-FedCASE
     ```
     cd .\system\
+    python main.py --data Cifar100 --algo FedCASE --global_lr 0.02 --ar_lr 0.05
     python main.py --data Cifar100 --algo Lay-FedCASE --global_lr 0.05 --ar_lr 0.02
     ```
 
