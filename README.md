@@ -1,6 +1,6 @@
 # PFLinMedicine
 
-This is the official implementation of **"FedCASE: Quantifying Asymmetric Collaboration for Personalised Federated Learning"**
+This is the official implementation of **"Personalised Federated Learning with Asymmetric Client Collaboration"**
 
 
 ## Quick Start Cifar100
