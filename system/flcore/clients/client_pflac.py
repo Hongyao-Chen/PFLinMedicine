@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from system.flcore.clients.clientbase import Client
 
 
-class clientOurs(Client):
+class PFL_AC_Client(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
         self.trainloader = self.load_train_data()

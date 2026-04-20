@@ -74,8 +74,8 @@ from flcore.trainmodel.resnet import *
 from flcore.trainmodel.alexnet import *
 from flcore.trainmodel.mobilenet_v2 import *
 from flcore.trainmodel.transformer import *
-from system.flcore.servers.Aservercase import FedCASE
-from system.flcore.servers.Aservercase_lay import Lay_FedCASE
+from system.flcore.servers.serverpflac import PFL_AC_Server
+from system.flcore.servers.serverpflac_lay import Lay_PFL_AC_Server
 from utils.result_utils import average_data
 from utils.mem_utils import MemReporter
 
@@ -231,12 +231,12 @@ def run(args):
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedAvg(args, i)
 
-        elif args.algorithm == "FedCASE":
-            server = FedCASE(args, i)
+        elif args.algorithm == "PFL-AC":
+            server = PFL_AC_Server(args, i)
             setattr(args.model, 'new_function', types.MethodType(server.list_load_to_params, args.model))
 
-        elif args.algorithm == "Lay-FedCASE":
-            server = Lay_FedCASE(args, i)
+        elif args.algorithm == "Lay-PFL-AC":
+            server = Lay_PFL_AC_Server(args, i)
             setattr(args.model, 'new_function', types.MethodType(server.list_load_to_params, args.model))
 
         elif args.algorithm == "Local":
@@ -441,7 +441,7 @@ if __name__ == "__main__":
     parser.add_argument('-did', "--device_id", type=str, default="0")
     parser.add_argument('-data', "--dataset", type=str, default="MIDOGpp")
     # PathMNIST 9 / OrganSMNIST 11 / OCTMNIST 4 / OrganCMNIST224 11 / # PneumoniaMNIST224 2 /$ RetinaMNIST224 5 /MIDOGpp 2
-    parser.add_argument('-ncl', "--num_classes", type=int, default=7)
+    parser.add_argument('-ncl', "--num_classes", type=int, default=2)
     parser.add_argument('-m', "--model", type=str, default='CNN')
     parser.add_argument('-lbs', "--batch_size", type=int, default=10)
     parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.005,
@@ -453,7 +453,7 @@ if __name__ == "__main__":
                         help="For auto_break")
     parser.add_argument('-ls', "--local_epochs", type=int, default=1,
                         help="Multiple update steps in one local epoch.")
-    parser.add_argument('-algo', "--algorithm", type=str, default="FedAvg")
+    parser.add_argument('-algo', "--algorithm", type=str, default="Lay-PFL-AC")
     parser.add_argument('-jr', "--join_ratio", type=float, default=1,
                         help="Ratio of clients per round")
     parser.add_argument('-rjr', "--random_join_ratio", type=bool, default=False,
@@ -539,8 +539,8 @@ if __name__ == "__main__":
     parser.add_argument('-mo', "--momentum", type=float, default=0.1)
     parser.add_argument('-klw', "--kl_weight", type=float, default=50)
     # ours
-    parser.add_argument('-global_lr', type=float, default=0.02)
-    parser.add_argument('-ar_lr', type=float, default=0.05)
+    parser.add_argument('-global_lr', type=float, default=0.05)
+    parser.add_argument('-ar_lr', type=float, default=0.02)
     args = parser.parse_args()
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.device_id
@@ -554,15 +554,5 @@ if __name__ == "__main__":
         print(arg, '=', getattr(args, arg))
     print("=" * 50)
 
-    # with torch.profiler.profile(
-    #     activities=[
-    #         torch.profiler.ProfilerActivity.CPU,
-    #         torch.profiler.ProfilerActivity.CUDA],
-    #     profile_memory=True,
-    #     on_trace_ready=torch.profiler.tensorboard_trace_handler('./log')
-    #     ) as prof:
-    # with torch.autograd.profiler.profile(profile_memory=True) as prof:
     run(args)
 
-    # print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=20))
-    # print(f"\nTotal time cost: {round(time.time()-total_start, 2)}s.")

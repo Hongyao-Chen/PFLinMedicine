@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from matplotlib import pyplot as plt
 
-from system.flcore.clients.Aclientcase import clientOurs
+from system.flcore.clients.client_pflac import PFL_AC_Client
 from system.flcore.servers.serverbase import Server
 
 pd.set_option('display.max_rows', None)
@@ -17,12 +17,12 @@ pd.set_option('display.width', None)
 from torch.autograd import Function
 
 
-class Lay_FedCASE(Server):
+class Lay_PFL_AC_Server(Server):
     def __init__(self, args, times):
         super().__init__(args, times)
 
         self.set_slow_clients()
-        self.set_clients(clientOurs)
+        self.set_clients(PFL_AC_Client)
         self.personalized_models = [copy.deepcopy(args.model) for _ in range(self.num_clients)]
         self.uploaded_list = [[] for _ in range(self.num_clients)]
         self.personalized_list = [[] for _ in range(self.num_clients)]
@@ -127,7 +127,7 @@ class Lay_FedCASE(Server):
 
         if self.num_new_clients > 0:
             self.eval_new_clients = True
-            self.set_new_clients(clientOurs)
+            self.set_new_clients(PFL_AC_Client)
             print(f"\n-------------Fine tuning round-------------")
             print("\nEvaluate new clients")
             self.evaluate()

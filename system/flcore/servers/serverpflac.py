@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 from matplotlib import pyplot as plt
 
-from system.flcore.clients.Aclientcase import clientOurs
+from system.flcore.clients.client_pflac import PFL_AC_Client
 from system.flcore.servers.serverbase import Server
 
 pd.set_option('display.max_rows', None)  # 显示所有行
@@ -16,12 +16,12 @@ pd.set_option('display.width', None)  # 设置显示宽度，None表示不限制
 from torch.autograd import Function
 
 
-class FedCASE(Server):
+class PFL_AC_Server(Server):
     def __init__(self, args, times):
         super().__init__(args, times)
 
         self.set_slow_clients()
-        self.set_clients(clientOurs)
+        self.set_clients(PFL_AC_Client)
         self.personalized_models = [copy.deepcopy(args.model) for _ in range(self.num_clients)]
         # self.updated_deltaW = [[copy.deepcopy(args.model) for _ in range(self.num_clients)] for _ in
         #                        range(self.num_clients)]
@@ -117,7 +117,7 @@ class FedCASE(Server):
 
         if self.num_new_clients > 0:
             self.eval_new_clients = True
-            self.set_new_clients(clientOurs)
+            self.set_new_clients(PFL_AC_Client)
             print(f"\n-------------Fine tuning round-------------")
             print("\nEvaluate new clients")
             self.evaluate()
