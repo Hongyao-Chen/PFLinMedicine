@@ -2,6 +2,15 @@
 
 This is the official implementation of **"Personalised Federated Learning with Asymmetric Client Collaboration"**
 
+## Setup
+Clone the repo and install the required packages.
+```
+    git clone https://github.com/Hongyao-Chen/PFLinMedicine.git
+    cd PFLinMedicine
+    conda create -n pflinmedicine python=3.11
+    conda activate pflinmedicine
+    pip install -r requirements.txt
+```
 
 ## Quick Start Cifar100
 - generate Cifar100 dataset
@@ -27,7 +36,7 @@ This is the official implementation of **"Personalised Federated Learning with A
     python generate_MIDOG.py
     ```
 
-- run PFL-A/Lay-PFL-AC on MIDOGpp 
+- run PFL-AC/Lay-PFL-AC on MIDOGpp 
     ```
     cd .\system\
     python main.py --data MIDOGpp --algo PFL-AC --global_lr 0.02 --ar_lr 0.05 --num_classes 7 --model CNN --num_clients 7
