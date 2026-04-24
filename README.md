@@ -45,13 +45,4 @@ Clone the repo and install the required packages.
     python main.py --data MIDOGpp --algo Lay-PFL-AC --global_lr 0.05 --ar_lr 0.02 --num_classes 7 --model CNN --num_clients 7    
   ```
   
-🎯**This repository is an extension of the following paper：**
-
-```
-@article{zhang2023pfllib,
-  title={PFLlib: Personalized Federated Learning Algorithm Library},
-  author={Zhang, Jianqing and Liu, Yang and Hua, Yang and Wang, Hao and Song, Tao and Xue, Zhengui and Ma, Ruhui and Cao, Jian},
-  journal={arXiv preprint arXiv:2312.04992},
-  year={2023}
-}
-```
+🎯**This code is built on [PFLlib](https://github.com/TsingZ0/PFLlib)：**
