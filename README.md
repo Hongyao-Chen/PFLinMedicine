@@ -2,7 +2,7 @@
 
 This is the official implementation of **"Personalised Federated Learning with Asymmetric Client Collaboration"**
 
-![PFL-AC](system/Workflow.jpg)
+![PFL-AC](system/Workflow.png)
 
 ## Setup
 Clone the repo and install the required packages.
